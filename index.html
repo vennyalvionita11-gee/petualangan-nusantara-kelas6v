@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Petualangan Nusantara Berjuta Cerita - Kelas VI SD Negeri 3 Manggar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* =========================================================================
+       DESIGN TOKENS & PALET WARNA NUSANTARA (MEMENUHI KONTRAS WCAG AA)
+       ========================================================================= */
+    :root {
+      --bg-utama: #fdf8f0;
+      --bg-kartu: #ffffff;
+      --bg-sekunder: #f3ead8;
+      --teks-utama: #1e293b;
+      --teks-sekunder: #475569;
+      --emas-nusantara: #b45309;
+      --emas-cerah: #d97706;
+      --emas-muda: #fef3c7;
+      --biru-laut: #0f4c81;
+      --biru-laut-gelap: #0a355c;
+      --biru-muda: #e0f2fe;
+      --hijau-daun: #15803d;
+      --hijau-muda: #dcfce7;
+      --merah-batik: #b91c1c;
+      --merah-muda: #fee2e2;
+      --jingga-peringatan: #c2410c;
+      --jingga-muda: #ffedd5;
+      --border-halus: #cbd5e1;
+      --bayangan: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius-kartu: 18px;
+      --radius-tombol: 14px;
+      --font-judul: 'Baloo 2', system-ui, -apple-system, sans-serif;
+      --font-isi: 'Nunito', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-isi);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--teks-utama);
+      background-color: var(--bg-utama);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Latar motif tenun/batik SVG halus */
+    .latar-motif {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.06;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2392400e' stroke-width='2'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3Ccircle cx='40' cy='40' r='12'/%3E%3Cpath d='M40 16L64 40L40 64L16 40Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Hormati pengaturan aksesibilitas pengguna */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* =========================================================================
+       HEADER TETAP (AUDIO, STATUS SIMPAN, TIMER)
+       ========================================================================= */
+    .bilah-atas {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--bg-sekunder);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .grup-kiri-atas {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .tombol-ikon {
+      min-width: 48px;
+      min-height: 48px;
+      border: 2px solid var(--border-halus);
+      border-radius: 12px;
+      background: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, background-color 0.2s ease;
+    }
+
+    .tombol-ikon:active {
+      transform: scale(0.95);
+    }
+
+    .indikator-simpan {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--hijau-muda);
+      color: var(--hijau-daun);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .indikator-simpan.menyimpan {
+      background: var(--emas-muda);
+      color: var(--emas-nusantara);
+    }
+
+    .indikator-simpan.offline {
+      background: var(--jingga-muda);
+      color: var(--jingga-peringatan);
+    }
+
+    .kotak-timer {
+      font-family: var(--font-judul);
+      font-size: 19px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 12px;
+      background: var(--biru-muda);
+      color: var(--biru-laut);
+      border: 2px solid #bae6fd;
+      white-space: nowrap;
+    }
+
+    .kotak-timer.jingga {
+      background: var(--jingga-muda);
+      color: var(--jingga-peringatan);
+      border-color: #fdba74;
+    }
+
+    .kotak-timer.merah {
+      background: var(--merah-muda);
+      color: var(--merah-batik);
+      border-color: #fca5a5;
+      animation: denyutPeringatan 0.3s ease alternate infinite;
+    }
+
+    @keyframes denyutPeringatan {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    /* =========================================================================
+       KONTAINER UTAMA & KARTU
+       ========================================================================= */
+    .wadah-utama {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px 14px 48px;
+    }
+
+    .layar {
+      display: none;
+    }
+
+    .layar.aktif {
+      display: block;
+      animation: munculHalus 0.25s ease;
+    }
+
+    @keyframes munculHalus {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kartu {
+      background: var(--bg-kartu);
+      border: 2px solid var(--bg-sekunder);
+      border-radius: var(--radius-kartu);
+      padding: 20px 18px;
+      box-shadow: var(--bayangan);
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-judul);
+      margin-top: 0;
+      line-height: 1.25;
+      color: var(--biru-laut-gelap);
+    }
+
+    h1 { font-size: 26px; }
+    h2 { font-size: 22px; }
+    h3 { font-size: 19px; }
+
+    /* =========================================================================
+       TOMBOL & INPUT FORM
+       ========================================================================= */
+    .tombol {
+      min-height: 50px;
+      padding: 12px 20px;
+      font-family: var(--font-judul);
+      font-size: 18px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-tombol);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, background-color 0.2s ease, opacity 0.2s ease;
+      text-decoration: none;
+    }
+
+    .tombol:active {
+      transform: scale(0.97);
+    }
+
+    .tombol-penuh {
+      width: 100%;
+    }
+
+    .tombol-utama {
+      background: var(--biru-laut);
+      color: #ffffff;
+      box-shadow: 0 4px 0 var(--biru-laut-gelap);
+    }
+
+    .tombol-utama:hover {
+      background: var(--biru-laut-gelap);
+    }
+
+    .tombol-emas {
+      background: var(--emas-cerah);
+      color: #ffffff;
+      box-shadow: 0 4px 0 #92400e;
+    }
+
+    .tombol-sekunder {
+      background: var(--bg-sekunder);
+      color: var(--teks-utama);
+      border: 2px solid #d6c7ad;
+    }
+
+    .tombol-nonaktif {
+      background: #cbd5e1;
+      color: #475569;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .grup-input {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .label-input {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--teks-utama);
+      font-size: 16px;
+    }
+
+    .kotak-input {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      font-family: var(--font-isi);
+      font-size: 16px;
+      font-weight: 600;
+      border: 2px solid var(--border-halus);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--teks-utama);
+    }
+
+    .kotak-input:focus {
+      outline: none;
+      border-color: var(--biru-laut);
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+    }
+
+    .pembungkus-password {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .pembungkus-password .kotak-input {
+      padding-right: 54px;
+    }
+
+    .tombol-mata {
+      position: absolute;
+      right: 4px;
+      min-width: 46px;
+      min-height: 46px;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Saran otomatis nama siswa */
+    .daftar-saran {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      background: #fff;
+      border: 2px solid var(--biru-laut);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      max-height: 210px;
+      overflow-y: auto;
+      box-shadow: var(--bayangan);
+      display: none;
+    }
+
+    .daftar-saran.terbuka {
+      display: block;
+    }
+
+    .item-saran {
+      padding: 12px 14px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .item-saran:hover, .item-saran:focus {
+      background: var(--biru-muda);
+      color: var(--biru-laut);
+    }
+
+    .pesan-galat {
+      background: var(--merah-muda);
+      color: var(--merah-batik);
+      border: 2px solid #fca5a5;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    /* =========================================================================
+       ANIMASI GOYANG & TOAST
+       ========================================================================= */
+    @keyframes goyangKartu {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    .goyang {
+      animation: goyangKartu 0.3s ease;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      transition: transform 0.25s ease;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.tampil {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =========================================================================
+       PETA 5 PULAU NUSANTARA
+       ========================================================================= */
+    .peta-pulau-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 560px) {
+      .peta-pulau-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .kartu-pulau {
+      border: 2px solid var(--border-halus);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      text-align: left;
+      min-height: 76px;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .kartu-pulau.terbuka {
+      border-color: var(--biru-laut);
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    }
+
+    .kartu-pulau.selesai {
+      border-color: var(--hijau-daun);
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+    }
+
+    .kartu-pulau.terkunci {
+      opacity: 0.65;
+      background: #f8fafc;
+      cursor: not-allowed;
+    }
+
+    .ikon-pulau {
+      width: 54px;
+      height: 54px;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================================
+       LAYAR SOAL, BACAAN, PANEL NOMOR, DAN PILIHAN JAWABAN
+       ========================================================================= */
+    .bilah-kemajuan-wadah {
+      margin-bottom: 14px;
+    }
+
+    .info-kemajuan {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: var(--biru-laut);
+    }
+
+    .rel-kemajuan {
+      width: 100%;
+      height: 12px;
+      background: var(--bg-sekunder);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .isi-kemajuan {
+      height: 100%;
+      background: linear-gradient(90deg, var(--biru-laut), var(--emas-cerah));
+      width: 4%;
+      transition: width 0.25s ease;
+    }
+
+    /* Panel nomor 1-25 */
+    .panel-nomor-toggle {
+      width: 100%;
+      min-height: 48px;
+      background: var(--bg-sekunder);
+      border: 2px solid #d6c7ad;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-family: var(--font-isi);
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--teks-utama);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .grid-nomor {
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      padding: 12px;
+      background: #fff;
+      border: 2px solid var(--bg-sekunder);
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+
+    .grid-nomor.terbuka {
+      display: grid;
+    }
+
+    .tombol-nomor {
+      min-height: 48px;
+      border-radius: 10px;
+      border: 2px solid var(--border-halus);
+      background: #f8fafc;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--teks-sekunder);
+      cursor: pointer;
+    }
+
+    .tombol-nomor.terjawab {
+      background: var(--hijau-muda);
+      border-color: var(--hijau-daun);
+      color: var(--hijau-daun);
+    }
+
+    .tombol-nomor.aktif {
+      background: var(--biru-laut);
+      border-color: var(--biru-laut-gelap);
+      color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.25);
+    }
+
+    .tombol-nomor.belum-dibuka {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Kartu Bacaan / Stimulus */
+    .kotak-bacaan {
+      background: #fffbeb;
+      border: 2px solid #fde68a;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .judul-bacaan {
+      font-family: var(--font-judul);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--emas-nusantara);
+      margin-bottom: 6px;
+    }
+
+    .teks-pertanyaan {
+      font-size: 17.5px;
+      font-weight: 700;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+
+    .lencana-tipe {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--biru-muda);
+      color: var(--biru-laut);
+      margin-bottom: 10px;
+    }
+
+    /* Opsi Pilihan Ganda & MCMA */
+    .daftar-opsi {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tombol-opsi {
+      min-height: 54px;
+      padding: 14px 16px;
+      border: 2px solid var(--border-halus);
+      border-radius: 14px;
+      background: #ffffff;
+      text-align: left;
+      font-family: var(--font-isi);
+      font-size: 16.5px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--teks-utama);
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .tombol-opsi.terpilih {
+      border-color: var(--biru-laut);
+      background: var(--biru-muda);
+      font-weight: 700;
+    }
+
+    .penanda-opsi {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #94a3b8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 14px;
+      font-weight: 800;
+      background: #fff;
+    }
+
+    .penanda-opsi.kotak {
+      border-radius: 6px;
+    }
+
+    .tombol-opsi.terpilih .penanda-opsi {
+      background: var(--biru-laut);
+      border-color: var(--biru-laut);
+      color: #fff;
+    }
+
+    /* PGK Kategori */
+    .kartu-kategori-item {
+      border: 2px solid var(--border-halus);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #f8fafc;
+    }
+
+    .teks-pernyataan-kat {
+      font-size: 16.5px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .grup-pilihan-kat {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tombol-kat {
+      min-height: 48px;
+      border: 2px solid var(--border-halus);
+      border-radius: 10px;
+      background: #fff;
+      font-family: var(--font-isi);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tombol-kat.terpilih {
+      background: var(--biru-laut);
+      color: #fff;
+      border-color: var(--biru-laut-gelap);
+    }
+
+    .navigasi-bawah {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    /* =========================================================================
+       TINJAU JAWABAN & LAYAR HASIL
+       ========================================================================= */
+    .item-tinjau {
+      border: 2px solid var(--border-halus);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-tinjau.kosong {
+      border-color: var(--merah-batik);
+      background: var(--merah-muda);
+    }
+
+    .skor-besar {
+      font-family: var(--font-judul);
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--biru-laut);
+      line-height: 1.1;
+      margin: 8px 0;
+    }
+
+    .kartu-pembahasan {
+      border: 2px solid var(--border-halus);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .kartu-pembahasan.benar {
+      border-left: 6px solid var(--hijau-daun);
+    }
+
+    .kartu-pembahasan.sebagian {
+      border-left: 6px solid var(--emas-cerah);
+    }
+
+    .kartu-pembahasan.salah {
+      border-left: 6px solid var(--merah-batik);
+    }
+
+    /* Modal Konfirmasi & Lihat Teks */
+    .modal-latar {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-latar.terbuka {
+      display: flex;
+    }
+
+    .modal-kotak {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px 18px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Confetti perayaan ringan */
+    .konfeti-wadah {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 80;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="latar-motif"></div>
+
+  <!-- BILAH ATAS TETAP -->
+  <header class="bilah-atas">
+    <div class="grup-kiri-atas">
+      <button type="button" id="btnAudio" class="tombol-ikon" aria-label="Suara Musik Latar" title="Suara Musik Latar">🔊</button>
+      <span id="indikatorSimpan" class="indikator-simpan" style="display:none;">Tersimpan ✓</span>
+    </div>
+    <div id="kotakTimer" class="kotak-timer" style="display:none;">45:00</div>
+  </header>
+
+  <main class="wadah-utama">
+    <!-- =====================================================================
+         LAYAR 1: HALAMAN AWAL / LOGIN
+         ===================================================================== -->
+    <section id="layarLogin" class="layar aktif">
+      <div class="kartu" style="text-align:center;">
+        <!-- Maskot Burung Garuda Nusantara & Peta Mini SVG Buatan Sendiri -->
+        <svg width="110" height="110" viewBox="0 0 120 120" aria-hidden="true" style="margin:0 auto 8px;display:block;">
+          <circle cx="60" cy="60" r="54" fill="#fef3c7" stroke="#d97706" stroke-width="4"/>
+          <!-- Sayap -->
+          <path d="M22 65 C10 48, 25 35, 42 52 Z" fill="#b45309"/>
+          <path d="M98 65 C110 48, 95 35, 78 52 Z" fill="#b45309"/>
+          <!-- Badan & Kepala -->
+          <ellipse cx="60" cy="68" rx="22" ry="26" fill="#d97706"/>
+          <circle cx="60" cy="42" r="18" fill="#fef08a"/>
+          <!-- Jambul -->
+          <path d="M54 25 L60 14 L66 25 Z" fill="#b45309"/>
+          <!-- Mata -->
+          <circle cx="53" cy="40" r="3.5" fill="#1e293b"/>
+          <circle cx="67" cy="40" r="3.5" fill="#1e293b"/>
+          <circle cx="54" cy="39" r="1.2" fill="#ffffff"/>
+          <circle cx="68" cy="39" r="1.2" fill="#ffffff"/>
+          <!-- Paruh -->
+          <path d="M55 46 L65 46 L60 54 Z" fill="#ea580c"/>
+          <!-- Buku Cerita di Dada -->
+          <rect x="46" y="64" width="28" height="20" rx="3" fill="#0f4c81"/>
+          <line x1="60" y1="64" x2="60" y2="84" stroke="#ffffff" stroke-width="2"/>
+        </svg>
+
+        <div style="font-weight:800;color:var(--emas-nusantara);font-size:14px;letter-spacing:0.5px;">
+          BAHASA INDONESIA KELAS VI • SD NEGERI 3 MANGGAR
+        </div>
+        <h1>Petualangan Nusantara Berjuta Cerita</h1>
+        <p style="color:var(--teks-sekunder);margin-bottom:0;">
+          Jelajahi lima pulau cerita rakyat Nusantara bersama Bu Venny Alvionita, S.Pd.!
+        </p>
+      </div>
+
+      <div class="kartu" id="kartuFormLogin">
+        <div id="pesanGalatLogin" class="pesan-galat" role="alert"></div>
+
+        <form id="formLogin" autocomplete="off">
+          <div class="grup-input">
+            <label for="inputNama" class="label-input">Nama Lengkap Murid</label>
+            <input type="text" id="inputNama" class="kotak-input" placeholder="Ketik atau pilih namamu..." required />
+            <div id="daftarSaranNama" class="daftar-saran" role="listbox"></div>
+          </div>
+
+          <div class="grup-input">
+            <label for="inputPassword" class="label-input">Password Petualangan</label>
+            <div class="pembungkus-password">
+              <input type="password" id="inputPassword" class="kotak-input" placeholder="Masukkan password dari Bu Venny" required />
+              <button type="button" id="btnTogglePassword" class="tombol-mata" aria-label="Tampilkan atau sembunyikan password">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnMulai" class="tombol tombol-utama tombol-penuh">
+            Mulai Petualangan 🚀
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         LAYAR 2: PETUNJUK SINGKAT
+         ===================================================================== -->
+    <section id="layarPetunjuk" class="layar">
+      <div class="kartu">
+        <h2>🧭 Bekal Petualanganmu</h2>
+        <p>Halo, <strong id="sapaanMurid">Petualang</strong>! Perhatikan 5 aturan singkat berikut sebelum berlayar:</p>
+        <ol style="padding-left:20px;font-size:17px;line-height:1.7;">
+          <li>Terdapat <strong>5 Pulau (25 soal)</strong> dengan waktu pengerjaan <strong>45 menit</strong>.</li>
+          <li>Pilih jawaban dengan teliti; tombol <strong>Lanjut</strong> aktif setelah soal dijawab.</li>
+          <li>Kamu bisa menekan <strong>Kembali</strong> atau panel nomor untuk mengecek ulang jawaban.</li>
+          <li>Jawabanmu <strong>tersimpan otomatis</strong>, jadi tetap aman jika sinyal terganggu.</li>
+          <li>Periksa semua jawaban di halaman <strong>Tinjau Jawaban</strong> sebelum mengumpulkan.</li>
+        </ol>
+        <button type="button" id="btnSayaSiap" class="tombol tombol-emas tombol-penuh" style="margin-top:10px;">
+          Saya Siap! ⛵
+        </button>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         LAYAR 3: PETA 5 PULAU NUSANTARA
+         ===================================================================== -->
+    <section id="layarPeta" class="layar">
+      <div class="kartu">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <h2 style="margin:0;">🗺️ Peta Kepulauan Nusantara</h2>
+          <button type="button" id="btnKeTinjauDariPeta" class="tombol tombol-sekunder" style="min-height:44px;font-size:15px;padding:8px 14px;">
+            Tinjau Semua (25)
+          </button>
+        </div>
+        <p style="color:var(--teks-sekunder);margin-top:0;">
+          Pilih pulau yang sudah terbuka untuk melanjutkan petualanganmu!
+        </p>
+        <div id="wadahPetaPulau" class="peta-pulau-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         LAYAR 4: LAYAR SOAL
+         ===================================================================== -->
+    <section id="layarSoal" class="layar">
+      <div class="bilah-kemajuan-wadah">
+        <div class="info-kemajuan">
+          <span id="labelPulauSoal">Pulau 1: Gerbang Cerita</span>
+          <span id="labelProgresSoal">Soal 1 dari 25</span>
+        </div>
+        <div class="rel-kemajuan">
+          <div id="isiKemajuan" class="isi-kemajuan"></div>
+        </div>
+      </div>
+
+      <!-- Panel Nomor Soal 1-25 -->
+      <button type="button" id="btnTogglePanelNomor" class="panel-nomor-toggle" aria-expanded="false">
+        <span>🔢 Daftar Nomor Soal (1–25)</span>
+        <span id="ikonPanelNomor">▼</span>
+      </button>
+      <div id="gridNomorSoal" class="grid-nomor"></div>
+
+      <!-- Kartu Soal Utama -->
+      <div class="kartu" id="kartuSoalAktif">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span id="lencanaTipeSoal" class="lencana-tipe">Pilihan Ganda</span>
+          <button type="button" id="btnLihatTeks" class="tombol tombol-sekunder" style="display:none;min-height:42px;font-size:14px;padding:6px 12px;">
+            📖 Lihat Teks
+          </button>
+        </div>
+
+        <!-- Kotak Stimulus Bacaan -->
+        <div id="kotakBacaan" class="kotak-bacaan" style="display:none;">
+          <div id="judulBacaan" class="judul-bacaan"></div>
+          <div id="isiBacaan" style="white-space:pre-line;"></div>
+        </div>
+
+        <div id="teksPertanyaan" class="teks-pertanyaan"></div>
+        <div id="wadahJawaban"></div>
+
+        <div class="navigasi-bawah">
+          <button type="button" id="btnKembaliSoal" class="tombol tombol-sekunder">
+            ⬅️ Kembali
+          </button>
+          <button type="button" id="btnLanjutSoal" class="tombol tombol-utama">
+            Lanjut ➡️
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         LAYAR 5: TINJAU JAWABAN
+         ===================================================================== -->
+    <section id="layarTinjau" class="layar">
+      <div class="kartu">
+        <h2>📋 Tinjau Jawabanmu</h2>
+        <p id="ringkasanTinjau" style="color:var(--teks-sekunder);">
+          Periksa kembali seluruh jawaban dari Pulau 1 hingga Pulau 5 sebelum dikumpulkan.
+        </p>
+        <div id="wadahDaftarTinjau"></div>
+
+        <div class="navigasi-bawah" style="margin-top:20px;">
+          <button type="button" id="btnKembaliKePeta" class="tombol tombol-sekunder">
+            🗺️ Peta Pulau
+          </button>
+          <button type="button" id="btnBukaKonfirmasiKumpul" class="tombol tombol-emas">
+            Kumpulkan ✅
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         LAYAR 6: LAYAR HASIL & PEMBAHASAN
+         ===================================================================== -->
+    <section id="layarHasil" class="layar">
+      <div class="kartu" style="text-align:center;">
+        <div style="font-size:44px;">🏆</div>
+        <h2>Petualangan Selesai!</h2>
+        <div id="hasilNama" style="font-size:19px;font-weight:800;color:var(--teks-utama);"></div>
+        <div id="hasilSkor" class="skor-besar">0</div>
+        <div id="hasilStatusKumpul" style="font-weight:700;color:var(--teks-sekunder);margin-bottom:8px;"></div>
+        <p id="hasilMotivasi" style="font-size:17px;font-weight:700;background:var(--emas-muda);padding:12px;border-radius:12px;color:#78350f;"></p>
+
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px;">
+          <div style="background:var(--bg-sekunder);padding:8px 4px;border-radius:10px;">
+            <div style="font-size:12px;font-weight:800;">Pulau 1</div>
+            <div id="skorL1" style="font-size:18px;font-weight:800;color:var(--biru-laut);">0</div>
+          </div>
+          <div style="background:var(--bg-sekunder);padding:8px 4px;border-radius:10px;">
+            <div style="font-size:12px;font-weight:800;">Pulau 2</div>
+            <div id="skorL2" style="font-size:18px;font-weight:800;color:var(--biru-laut);">0</div>
+          </div>
+          <div style="background:var(--bg-sekunder);padding:8px 4px;border-radius:10px;">
+            <div style="font-size:12px;font-weight:800;">Pulau 3</div>
+            <div id="skorL3" style="font-size:18px;font-weight:800;color:var(--biru-laut);">0</div>
+          </div>
+          <div style="background:var(--bg-sekunder);padding:8px 4px;border-radius:10px;">
+            <div style="font-size:12px;font-weight:800;">Pulau 4</div>
+            <div id="skorL4" style="font-size:18px;font-weight:800;color:var(--biru-laut);">0</div>
+          </div>
+          <div style="background:var(--bg-sekunder);padding:8px 4px;border-radius:10px;">
+            <div style="font-size:12px;font-weight:800;">Pulau 5</div>
+            <div id="skorL5" style="font-size:18px;font-weight:800;color:var(--biru-laut);">0</div>
+          </div>
+        </div>
+        <div id="hasilDurasi" style="margin-top:12px;font-size:15px;font-weight:700;color:var(--teks-sekunder);"></div>
+      </div>
+
+      <!-- Bagian Pembahasan Dinamis -->
+      <div class="kartu">
+        <h3>📚 Pembahasan Soal</h3>
+        <div id="wadahTerkunciPembahasan">
+          <p style="color:var(--teks-sekunder);font-weight:600;">
+            Pembahasan akan dibuka oleh Bu Venny setelah semua teman selesai mengerjakan.
+          </p>
+          <button type="button" id="btnCekPembahasan" class="tombol tombol-utama tombol-penuh">
+            🔄 Cek Pembahasan
+          </button>
+        </div>
+        <div id="wadahDaftarPembahasan" style="display:none;"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL KONFIRMASI PENGUMPULAN (2 LANGKAH) -->
+  <div id="modalKonfirmasi" class="modal-latar" role="dialog" aria-modal="true">
+    <div class="modal-kotak">
+      <h3>⛵ Kumpulkan Jawaban?</h3>
+      <p style="font-size:17px;">
+        <strong>Yakin mengumpulkan? Setelah ini jawaban tidak bisa diubah lagi.</strong>
+      </p>
+      <div id="statusKirimModal" style="display:none;background:var(--emas-muda);color:#78350f;padding:12px;border-radius:12px;font-weight:800;margin-bottom:14px;">
+        Sedang mengirim jawaban ke Bu Venny... Jangan tutup halaman ini!
+      </div>
+      <div class="navigasi-bawah">
+        <button type="button" id="btnBatalKumpul" class="tombol tombol-sekunder">Batal</button>
+        <button type="button" id="btnKonfirmasiKumpulFinal" class="tombol tombol-emas">Ya, Kumpulkan!</button>
+      </div>
+      <button type="button" id="btnKirimUlangManual" class="tombol tombol-utama tombol-penuh" style="display:none;margin-top:10px;">
+        🔄 Kirim Ulang
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL BACA ULANG TEKS -->
+  <div id="modalBacaTeks" class="modal-latar" role="dialog" aria-modal="true">
+    <div class="modal-kotak">
+      <h3 id="modalJudulTeks">Bacaan</h3>
+      <div id="modalIsiTeks" style="font-size:17px;line-height:1.65;white-space:pre-line;margin-bottom:16px;"></div>
+      <button type="button" id="btnTutupModalTeks" class="tombol tombol-utama tombol-penuh">Tutup Bacaan</button>
+    </div>
+  </div>
+
+  <div id="konfetiWadah" class="konfeti-wadah"></div>
+  <div id="toastPesan" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /**
+     * =========================================================================
+     * KONFIGURASI URL WEB APP APPS SCRIPT
+     * Ganti nilai konstanta di bawah ini dengan URL Web App hasil deploy Code.gs
+     * =========================================================================
+     */
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz1zeTzwTll_af0riLz4Bw_-4NB81EN2wkdJ2PJbmgykqKRYol0EiGiZ3WEZAukdEb7/exec';
+
+    const NAMA_PULAU = [
+      { level: 1, nama: 'Pulau Gerbang Cerita', subjudul: 'Soal 1–5' },
+      { level: 2, nama: 'Pulau Jejak Kata', subjudul: 'Soal 6–10' },
+      { level: 3, nama: 'Pulau Rahasia Kisah', subjudul: 'Soal 11–15' },
+      { level: 4, nama: 'Pulau Teka-teki Nusantara', subjudul: 'Soal 16–20' },
+      { level: 5, nama: 'Pulau Puncak Bijak', subjudul: 'Soal 21–25' }
+    ];
+
+    /**
+     * State Global Aplikasi (Tidak menyimpan kunci jawaban maupun password)
+     */
+    const state = {
+      daftarSiswa: [],
+      nama: '',
+      noAbsen: '',
+      idSesi: '',
+      soal: [],
+      jawaban: {}, // Format: { "1": { val: ..., ts: 123456 } }
+      posisiSoal: 1,
+      soalPernahDibuka: new Set([1]),
+      sisaWaktuDetik: 45 * 60,
+      timerInterval: null,
+      peringatan10Menit: false,
+      peringatan5Menit: false,
+      jumlahKeluar: 0,
+      adaPerubahanBelumSinkron: false,
+      sedangMengirim: false,
+      antreanRequest: Promise.resolve(),
+      autoSaveTimeout: null,
+      submissionId: '',
+      sudahSelesai: false,
+      layarAktif: 'layarLogin'
+    };
+
+    /**
+     * =========================================================================
+     * MESIN AUDIO WEB AUDIO API (GAMELAN / PENTATONIK LEMBUT & EFEK KLIK)
+     * =========================================================================
+     */
+    const AudioNusantara = (() => {
+      let ctx = null;
+      let aktif = localStorage.getItem('nusantara_audio_aktif') !== 'false';
+      let sedangMain = false;
+      let timerNada = null;
+      let indeksNada = 0;
+
+      // Tangga nada pelog/pentatonik lembut (Hz)
+      const nadaPentatonik = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 440.00, 392.00];
+
+      function pastikanCtx() {
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) ctx = new AudioCtx();
+        }
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+      }
+
+      function mainkanNadaLembut(freq, durasi, vol) {
+        if (!aktif) return;
+        pastikanCtx();
+        if (!ctx) return;
+
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(vol, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + durasi);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + durasi + 0.05);
+      }
+
+      function mulaiBacksound() {
+        if (!aktif || sedangMain || state.sudahSelesai) return;
+        pastikanCtx();
+        sedangMain = true;
+        const langkah = () => {
+          if (!sedangMain || !aktif || document.hidden || state.layarAktif === 'layarHasil') return;
+          const freq = nadaPentatonik[indeksNada % nadaPentatonik.length];
+          mainkanNadaLembut(freq, 1.8, 0.035); // Volume awal lembut (~15% persepsi)
+          indeksNada++;
+          timerNada = setTimeout(langkah, 1600);
+        };
+        langkah();
+      }
+
+      function hentikanBacksound() {
+        sedangMain = false;
+        if (timerNada) clearTimeout(timerNada);
+      }
+
+      function toggle() {
+        aktif = !aktif;
+        localStorage.setItem('nusantara_audio_aktif', String(aktif));
+        perbaruiTombolAudio();
+        if (aktif && state.layarAktif !== 'layarLogin' && state.layarAktif !== 'layarHasil') {
+          mulaiBacksound();
+        } else {
+          hentikanBacksound();
+        }
+      }
+
+      function efekKlik() {
+        mainkanNadaLembut(523.25, 0.09, 0.02);
+      }
+
+      function efekBelumDijawab() {
+        mainkanNadaLembut(330, 0.14, 0.04);
+        setTimeout(() => mainkanNadaLembut(261.63, 0.18, 0.04), 130);
+      }
+
+      function perbaruiTombolAudio() {
+        const btn = document.getElementById('btnAudio');
+        if (btn) btn.textContent = aktif ? '🔊' : '🔇';
+      }
+
+      return {
+        mulaiBacksound,
+        hentikanBacksound,
+        toggle,
+        efekKlik,
+        efekBelumDijawab,
+        perbaruiTombolAudio
+      };
+    })();
+
+    /**
+     * =========================================================================
+     * KOMUNIKASI SERVER DENGAN ANTREAN & EXPONENTIAL BACKOFF
+     * =========================================================================
+     */
+    function kirimKeServer(payload, opsi = {}) {
+      const jalankan = async () => {
+        const maksCoba = opsi.maksCoba || 6;
+        let percobaan = 0;
+
+        while (percobaan < maksCoba) {
+          try {
+            const resp = await fetch(WEB_APP_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload),
+              keepalive: Boolean(opsi.keepalive)
+            });
+
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+            return data;
+          } catch (err) {
+            percobaan++;
+            if (percobaan >= maksCoba) throw err;
+            // Exponential backoff: 1, 2, 4, 8, 16 detik + jeda acak 0-1000 ms
+            const tundaMs = Math.pow(2, percobaan - 1) * 1000 + Math.floor(Math.random() * 1000);
+            await new Promise(r => setTimeout(r, tundaMs));
+          }
+        }
+      };
+
+      // Hanya 1 permintaan aktif per murid lewat antrean berantai
+      const hasilAntrean = state.antreanRequest.then(jalankan, jalankan);
+      state.antreanRequest = hasilAntrean.catch(() => {});
+      return hasilAntrean;
+    }
+
+    /**
+     * =========================================================================
+     * INISIALISASI HALAMAN & AUTOCOMPLETE NAMA SISWA
+     * =========================================================================
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      AudioNusantara.perbaruiTombolAudio();
+      muatDaftarSiswa();
+      pasangEventListeners();
+    });
+
+    async function muatDaftarSiswa() {
+      if (!WEB_APP_URL || WEB_APP_URL.includes('TEMPEL_URL')) {
+        tampilkanGalatLogin('URL Web App belum dipasang di berkas index.html. Hubungi Bu Venny.');
+        return;
+      }
+      try {
+        const res = await kirimKeServer({ aksi: 'daftarSiswa' }, { maksCoba: 3 });
+        if (res && res.ok && Array.isArray(res.daftarSiswa)) {
+          state.daftarSiswa = res.daftarSiswa;
+        }
+      } catch (e) {
+        tampilkanToast('Gagal memuat daftar nama. Periksa koneksi internetmu.');
+      }
+    }
+
+    function pasangEventListeners() {
+      document.getElementById('btnAudio').addEventListener('click', () => {
+        AudioNusantara.toggle();
+      });
+
+      // Toggle mata password
+      document.getElementById('btnTogglePassword').addEventListener('click', () => {
+        const inp = document.getElementById('inputPassword');
+        const btn = document.getElementById('btnTogglePassword');
+        if (inp.type === 'password') {
+          inp.type = 'text';
+          btn.textContent = '🙈';
+        } else {
+          inp.type = 'password';
+          btn.textContent = '👁️';
+        }
+      });
+
+      // Autocomplete Nama
+      const inputNama = document.getElementById('inputNama');
+      const daftarSaran = document.getElementById('daftarSaranNama');
+
+      inputNama.addEventListener('input', () => {
+        const kata = inputNama.value.trim().toLowerCase();
+        daftarSaran.innerHTML = '';
+        if (!kata) {
+          daftarSaran.classList.remove('terbuka');
+          return;
+        }
+        const cocok = state.daftarSiswa.filter(n => n.toLowerCase().includes(kata)).slice(0, 8);
+        if (cocok.length === 0) {
+          daftarSaran.classList.remove('terbuka');
+          return;
+        }
+        cocok.forEach(nama => {
+          const div = document.createElement('div');
+          div.className = 'item-saran';
+          div.textContent = nama;
+          div.addEventListener('click', () => {
+            inputNama.value = nama;
+            daftarSaran.classList.remove('terbuka');
+          });
+          daftarSaran.appendChild(div);
+        });
+        daftarSaran.classList.add('terbuka');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#inputNama') && !e.target.closest('#daftarSaranNama')) {
+          daftarSaran.classList.remove('terbuka');
+        }
+      });
+
+      // Submit Login
+      document.getElementById('formLogin').addEventListener('submit', tanganiSubmitLogin);
+
+      // Tombol Saya Siap
+      document.getElementById('btnSayaSiap').addEventListener('click', () => {
+        AudioNusantara.efekKlik();
+        renderPetaPulau();
+        gantiLayar('layarPeta');
+      });
+
+      document.getElementById('btnKeTinjauDariPeta').addEventListener('click', () => {
+        AudioNusantara.efekKlik();
+        bukaHalamanTinjau();
+      });
+
+      // Toggle Panel Nomor
+      document.getElementById('btnTogglePanelNomor').addEventListener('click', () => {
+        AudioNusantara.efekKlik();
+        const grid = document.getElementById('gridNomorSoal');
+        const ikon = document.getElementById('ikonPanelNomor');
+        const terbuka = grid.classList.toggle('terbuka');
+        ikon.textContent = terbuka ? '▲' : '▼';
+      });
+
+      // Lihat Teks Stimulus Modal
+      document.getElementById('btnLihatTeks').addEventListener('click', () => {
+        const s = state.soal[state.posisiSoal - 1];
+        if (!s || !s.teks) return;
+        document.getElementById('modalJudulTeks').textContent = s.judulTeks || 'Teks Bacaan';
+        document.getElementById('modalIsiTeks').textContent = s.teks;
+        document.getElementById('modalBacaTeks').classList.add('terbuka');
+      });
+
+      document.getElementById('btnTutupModalTeks').addEventListener('click', () => {
+        document.getElementById('modalBacaTeks').classList.remove('terbuka');
+      });
+
+      // Navigasi Soal
+      document.getElementById('btnKembaliSoal').addEventListener('click', () => {
+        AudioNusantara.efekKlik();
+        if (state.posisiSoal > 1) {
+          bukaSoal(state.posisiSoal - 1);
+        }
+      });
+
+      document.getElementById('btnLanjutSoal').addEventListener('click', () => {
+        const soalAktif = state.soal[state.posisiSoal - 1];
+        if (!apakahSoalTerjawab(soalAktif)) {
+          // Getarkan ponsel (dalam handler klik), animasi goyang, nada lembut, toast
+          if (navigator.vibrate) {
+            try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+          }
+          AudioNusantara.efekBelumDijawab();
+          const kartu = document.getElementById('kartuSoalAktif');
+          kartu.classList.remove('goyang');
+          void kartu.offsetWidth;
+          kartu.classList.add('goyang');
+          tampilkanToast('Soal ini belum dijawab, ya!');
+          return;
+        }
+
+        AudioNusantara.efekKlik();
+        const levelSebelum = soalAktif.level;
+        if (state.posisiSoal < 25) {
+          const soalBerikut = state.soal[state.posisiSoal];
+          // Sinkronkan saat pindah level
+          if (soalBerikut.level !== levelSebelum && state.adaPerubahanBelumSinkron) {
+            sinkronkanProgresKeServer();
+          }
+          bukaSoal(state.posisiSoal + 1);
+        } else {
+          if (state.adaPerubahanBelumSinkron) {
+            sinkronkanProgresKeServer();
+          }
+          bukaHalamanTinjau();
+        }
+      });
+
+      // Tinjau Jawaban & Pengumpulan
+      document.getElementById('btnKembaliKePeta').addEventListener('click', () => {
+        AudioNusantara.efekKlik();
+        renderPetaPulau();
+        gantiLayar('layarPeta');
+      });
+
+      document.getElementById('btnBukaKonfirmasiKumpul').addEventListener('click', () => {
+        const soalKosong = state.soal.find(s => !apakahSoalTerjawab(s));
+        if (soalKosong) {
+          if (navigator.vibrate) {
+            try { navigator.vibrate([200, 100, 200]); } catch (e) {}
+          }
+          AudioNusantara.efekBelumDijawab();
+          tampilkanToast(`Soal nomor ${soalKosong.no} belum dijawab! Yuk lengkapi dulu.`);
+          const elKosong = document.getElementById('tinjau-no-' + soalKosong.no);
+          if (elKosong) {
+            elKosong.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            elKosong.classList.add('goyang');
+          }
+          return;
+        }
+        AudioNusantara.efekKlik();
+        document.getElementById('modalKonfirmasi').classList.add('terbuka');
+      });
+
+      document.getElementById('btnBatalKumpul').addEventListener('click', () => {
+        document.getElementById('modalKonfirmasi').classList.remove('terbuka');
+      });
+
+      document.getElementById('btnKonfirmasiKumpulFinal').addEventListener('click', () => {
+        kumpulkanJawabanFinal('Selesai Sendiri');
+      });
+
+      document.getElementById('btnKirimUlangManual').addEventListener('click', () => {
+        kumpulkanJawabanFinal('Selesai Sendiri');
+      });
+
+      document.getElementById('btnCekPembahasan').addEventListener('click', cekPembahasanServer);
+
+      // Tangkap tombol Back bawaan HP / Browser agar pindah ke soal sebelumnya
+      window.addEventListener('popstate', () => {
+        if (state.sudahSelesai) return;
+        history.pushState({ app: 'nusantara' }, '');
+        if (state.layarAktif === 'layarSoal' && state.posisiSoal > 1) {
+          bukaSoal(state.posisiSoal - 1);
+        } else if (state.layarAktif === 'layarTinjau') {
+          bukaSoal(25);
+        }
+      });
+
+      // Pantau keluar aplikasi / pindah tab (visibilitychange)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          AudioNusantara.hentikanBacksound();
+          if (state.idSesi && !state.sudahSelesai) {
+            state.jumlahKeluar++;
+            simpanKeLocalStorage();
+            // Kirim progres dengan keepalive: true
+            fetch(WEB_APP_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              keepalive: true,
+              body: JSON.stringify({
+                aksi: 'simpanProgres',
+                nama: state.nama,
+                idSesi: state.idSesi,
+                posisiSoal: state.posisiSoal,
+                jawaban: state.jawaban,
+                jumlahKeluar: state.jumlahKeluar
+              })
+            }).catch(() => {});
+          }
+        } else {
+          if (state.layarAktif !== 'layarLogin' && state.layarAktif !== 'layarHasil' && !state.sudahSelesai) {
+            AudioNusantara.mulaiBacksound();
+          }
+        }
+      });
+    }
+
+    /**
+     * =========================================================================
+     * PROSES LOGIN & PEMULIHAN DATA LOKAL + SERVER
+     * =========================================================================
+     */
+    async function tanganiSubmitLogin(e) {
+      e.preventDefault();
+      const nama = document.getElementById('inputNama').value.trim();
+      const password = document.getElementById('inputPassword').value.trim();
+      const btnMulai = document.getElementById('btnMulai');
+
+      sembunyikanGalatLogin();
+
+      if (!nama || !password) {
+        tampilkanGalatLogin('Isi nama lengkap dan password terlebih dahulu, ya!');
+        return;
+      }
+
+      if (state.daftarSiswa.length > 0) {
+        const ada = state.daftarSiswa.some(n => n.toLowerCase() === nama.toLowerCase());
+        if (!ada) {
+          tampilkanGalatLogin('Namamu belum sesuai dengan Daftar Siswa. Pilih nama dari saran yang muncul!');
+          return;
+        }
+      }
+
+      btnMulai.disabled = true;
+      btnMulai.textContent = 'Memeriksa... ⏳';
+
+      try {
+        const res = await kirimKeServer({
+          aksi: 'login',
+          nama: nama,
+          password: password
+        }, { maksCoba: 4 });
+
+        if (!res || !res.ok) {
+          if (navigator.vibrate) {
+            try { navigator.vibrate([200, 100, 200]); } catch (err) {}
+          }
+          tampilkanGalatLogin((res && res.pesan) || 'Gagal masuk. Periksa password dan coba lagi.');
+          return;
+        }
+
+        // Aktifkan history state untuk tangkap tombol Back HP
+        history.pushState({ app: 'nusantara' }, '');
+
+        // Jika murid sudah mengumpulkan sebelumnya -> langsung ke layar hasil
+        if (res.sudahSelesai) {
+          state.nama = res.hasil.nama;
+          state.sudahSelesai = true;
+          tampilkanLayarHasil(res.hasil, res.pembahasanDibuka, res.pembahasan);
+          return;
+        }
+
+        // Mulai sesi aktif
+        state.nama = res.nama;
+        state.noAbsen = res.noAbsen;
+        state.idSesi = res.idSesi;
+        state.soal = res.soal;
+        state.sisaWaktuDetik = res.sisaWaktuDetik;
+        state.jumlahKeluar = res.jumlahKeluar || 0;
+        state.submissionId = state.nama + '_' + state.idSesi + '_FINAL';
+
+        // Gabungkan jawaban server dan localStorage berdasarkan timestamp terbaru
+        const dataLokal = bacaDariLocalStorage();
+        state.jawaban = gabungkanJawabanLokalServer(res.jawaban || {}, dataLokal.jawaban || {});
+        state.jumlahKeluar = Math.max(state.jumlahKeluar, dataLokal.jumlahKeluar || 0);
+
+        const posTerakhir = Math.min(25, Math.max(1, Number(dataLokal.posisiSoal || res.posisiSoal || 1)));
+        state.posisiSoal = posTerakhir;
+        for (let i = 1; i <= posTerakhir; i++) {
+          state.soalPernahDibuka.add(i);
+        }
+        Object.keys(state.jawaban).forEach(noStr => {
+          state.soalPernahDibuka.add(Number(noStr));
+        });
+
+        simpanKeLocalStorage();
+        AudioNusantara.mulaiBacksound();
+        mulaiTimerMundur();
+        jadwalkanAutoSave();
+
+        document.getElementById('sapaanMurid').textContent = state.nama;
+        document.getElementById('indikatorSimpan').style.display = 'inline-block';
+        gantiLayar('layarPetunjuk');
+      } catch (err) {
+        tampilkanGalatLogin('Koneksi ke server sedang sibuk. Tunggu sebentar lalu tekan Mulai lagi.');
+      } finally {
+        btnMulai.disabled = false;
+        btnMulai.textContent = 'Mulai Petualangan 🚀';
+      }
+    }
+
+    function tampilkanGalatLogin(pesan) {
+      const box = document.getElementById('pesanGalatLogin');
+      box.textContent = pesan;
+      box.style.display = 'block';
+    }
+
+    function sembunyikanGalatLogin() {
+      const box = document.getElementById('pesanGalatLogin');
+      box.style.display = 'none';
+    }
+
+    /**
+     * =========================================================================
+     * PENYIMPANAN OTOMATIS (LOCALSTORAGE + SINKRONISASI SERVER BERJEDA ACAK)
+     * =========================================================================
+     */
+    function getKunciStorage() {
+      return 'nusantara_v1_' + state.nama + '_' + state.idSesi;
+    }
+
+    function simpanKeLocalStorage() {
+      if (!state.nama || !state.idSesi) return;
+      try {
+        localStorage.setItem(getKunciStorage(), JSON.stringify({
+          posisiSoal: state.posisiSoal,
+          jawaban: state.jawaban,
+          jumlahKeluar: state.jumlahKeluar,
+          updatedAt: Date.now()
+        }));
+      } catch (e) {}
+    }
+
+    function bacaDariLocalStorage() {
+      try {
+        const raw = localStorage.getItem(getKunciStorage());
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function gabungkanJawabanLokalServer(serverMap, lokalMap) {
+      const gabung = Object.assign({}, serverMap);
+      Object.keys(lokalMap).forEach(noStr => {
+        const lok = lokalMap[noStr];
+        const srv = gabung[noStr];
+        if (!srv || Number(lok.ts || 0) >= Number(srv.ts || 0)) {
+          gabung[noStr] = lok;
+        }
+      });
+      return gabung;
+    }
+
+    function jadwalkanAutoSave() {
+      if (state.autoSaveTimeout) clearTimeout(state.autoSaveTimeout);
+      if (state.sudahSelesai) return;
+
+      // 30 detik + jeda acak 0-10 detik agar 30 murid tidak menabrak server bersamaan
+      const intervalMs = 30000 + Math.floor(Math.random() * 10000);
+      state.autoSaveTimeout = setTimeout(async () => {
+        if (state.adaPerubahanBelumSinkron && !state.sudahSelesai) {
+          await sinkronkanProgresKeServer();
+        }
+        jadwalkanAutoSave();
+      }, intervalMs);
+    }
+
+    async function sinkronkanProgresKeServer() {
+      if (!state.idSesi || state.sudahSelesai) return;
+      const ind = document.getElementById('indikatorSimpan');
+      ind.textContent = 'Menyimpan…';
+      ind.className = 'indikator-simpan menyimpan';
+
+      try {
+        const res = await kirimKeServer({
+          aksi: 'simpanProgres',
+          nama: state.nama,
+          idSesi: state.idSesi,
+          posisiSoal: state.posisiSoal,
+          jawaban: state.jawaban,
+          jumlahKeluar: state.jumlahKeluar
+        }, { maksCoba: 4 });
+
+        if (res && res.ok) {
+          state.adaPerubahanBelumSinkron = false;
+          if (typeof res.sisaWaktuDetik === 'number') {
+            state.sisaWaktuDetik = res.sisaWaktuDetik;
+          }
+          ind.textContent = 'Tersimpan ✓';
+          ind.className = 'indikator-simpan';
+        } else if (res && res.waktuHabis) {
+          kumpulkanJawabanFinal('Waktu Habis');
+        }
+      } catch (e) {
+        ind.textContent = 'Offline – tersimpan di perangkat';
+        ind.className = 'indikator-simpan offline';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * TIMER 45 MENIT BERBASIS SERVER
+     * =========================================================================
+     */
+    function mulaiTimerMundur() {
+      const kotak = document.getElementById('kotakTimer');
+      kotak.style.display = 'block';
+      perbaruiTampilanTimer();
+
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        if (state.sudahSelesai) {
+          clearInterval(state.timerInterval);
+          return;
+        }
+        state.sisaWaktuDetik = Math.max(0, state.sisaWaktuDetik - 1);
+        perbaruiTampilanTimer();
+
+        if (state.sisaWaktuDetik <= 600 && !state.peringatan10Menit) {
+          state.peringatan10Menit = true;
+          tampilkanToast('⏳ Waktu tersisa 10 menit lagi! Periksa jawabanmu dengan teliti.');
+        }
+        if (state.sisaWaktuDetik <= 300 && !state.peringatan5Menit) {
+          state.peringatan5Menit = true;
+          tampilkanToast('⚠️ Waktu tersisa 5 menit lagi! Bersiap mengumpulkan.');
+        }
+        if (state.sisaWaktuDetik <= 0) {
+          clearInterval(state.timerInterval);
+          kumpulkanJawabanFinal('Waktu Habis');
+        }
+      }, 1000);
+    }
+
+    function perbaruiTampilanTimer() {
+      const kotak = document.getElementById('kotakTimer');
+      const m = Math.floor(state.sisaWaktuDetik / 60);
+      const s = state.sisaWaktuDetik % 60;
+      kotak.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+      kotak.classList.remove('jingga', 'merah');
+      if (state.sisaWaktuDetik <= 300) {
+        kotak.classList.add('merah');
+      } else if (state.sisaWaktuDetik <= 600) {
+        kotak.classList.add('jingga');
+      }
+    }
+
+    /**
+     * =========================================================================
+     * PETA PULAU & NAVIGASI SOAL
+     * =========================================================================
+     */
+    function renderPetaPulau() {
+      const wadah = document.getElementById('wadahPetaPulau');
+      wadah.innerHTML = '';
+
+      // Tentukan level tertinggi yang sudah dibuka
+      let maxLevelTerbuka = 1;
+      state.soalPernahDibuka.forEach(no => {
+        const lvl = Math.ceil(no / 5);
+        if (lvl > maxLevelTerbuka) maxLevelTerbuka = lvl;
+      });
+
+      NAMA_PULAU.forEach(pulau => {
+        const soalAwal = (pulau.level - 1) * 5 + 1;
+        const soalAkhir = pulau.level * 5;
+        let terjawabCount = 0;
+        for (let n = soalAwal; n <= soalAkhir; n++) {
+          if (apakahSoalTerjawab(state.soal[n - 1])) terjawabCount++;
+        }
+
+        const semuaSelesai = terjawabCount === 5;
+        const terbuka = pulau.level <= maxLevelTerbuka || terjawabCount > 0;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'kartu-pulau ' + (semuaSelesai ? 'selesai' : (terbuka ? 'terbuka' : 'terkunci'));
+        btn.innerHTML = `
+          <svg class="ikon-pulau" viewBox="0 0 60 60" aria-hidden="true">
+            <circle cx="30" cy="30" r="28" fill="${semuaSelesai ? '#dcfce7' : (terbuka ? '#e0f2fe' : '#e2e8f0')}"/>
+            <path d="M12 38 Q30 18 48 38 Z" fill="${semuaSelesai ? '#15803d' : (terbuka ? '#0f4c81' : '#94a3b8')}"/>
+            <circle cx="42" cy="18" r="5" fill="#f59e0b"/>
+          </svg>
+          <div>
+            <div style="font-family:var(--font-judul);font-size:18px;font-weight:800;">
+              ${pulau.level}. ${pulau.nama}
+            </div>
+            <div style="font-size:14px;font-weight:700;color:var(--teks-sekunder);">
+              ${pulau.subjudul} • ${semuaSelesai ? 'Selesai (5/5) ✅' : (terbuka ? `Terjawab ${terjawabCount}/5` : 'Terkunci 🔒')}
+            </div>
+          </div>
+        `;
+
+        btn.addEventListener('click', () => {
+          if (!terbuka) {
+            tampilkanToast('Selesaikan pulau sebelumnya dulu, ya!');
+            return;
+          }
+          AudioNusantara.efekKlik();
+          // Buka soal pertama yang belum dijawab di pulau ini, atau soal awal pulau
+          let targetNo = soalAwal;
+          for (let n = soalAwal; n <= soalAkhir; n++) {
+            if (!apakahSoalTerjawab(state.soal[n - 1])) {
+              targetNo = n;
+              break;
+            }
+          }
+          bukaSoal(targetNo);
+        });
+
+        wadah.appendChild(btn);
+      });
+    }
+
+    function bukaSoal(nomor) {
+      state.posisiSoal = nomor;
+      state.soalPernahDibuka.add(nomor);
+      simpanKeLocalStorage();
+
+      const soal = state.soal[nomor - 1];
+      const pulau = NAMA_PULAU[soal.level - 1];
+
+      document.getElementById('labelPulauSoal').textContent = `Pulau ${pulau.level}: ${pulau.nama}`;
+      document.getElementById('labelProgresSoal').textContent = `Soal ${nomor} dari 25`;
+      document.getElementById('isiKemajuan').style.width = `${(nomor / 25) * 100}%`;
+
+      // Lencana bentuk soal
+      const mapLabelTipe = {
+        PG: 'Pilihan Ganda (Pilih 1 jawaban)',
+        MCMA: 'Pilihan Ganda Kompleks (Pilih 2 jawaban benar)',
+        KATEGORI: 'Pilihan Ganda Kompleks Kategori (Tentukan semua baris)'
+      };
+      document.getElementById('lencanaTipeSoal').textContent = mapLabelTipe[soal.tipe] || soal.tipe;
+
+      // Tampilkan bacaan jika ada
+      const kotakBacaan = document.getElementById('kotakBacaan');
+      const btnLihatTeks = document.getElementById('btnLihatTeks');
+      if (soal.teks && soal.teks.trim() !== '') {
+        kotakBacaan.style.display = 'block';
+        btnLihatTeks.style.display = 'inline-flex';
+        document.getElementById('judulBacaan').textContent = soal.judulTeks || 'Teks Bacaan';
+        document.getElementById('isiBacaan').textContent = soal.teks;
+        kotakBacaan.scrollTop = 0;
+      } else {
+        kotakBacaan.style.display = 'none';
+        btnLihatTeks.style.display = 'none';
+      }
+
+      document.getElementById('teksPertanyaan').textContent = soal.pertanyaan;
+      renderPilihanJawaban(soal);
+      renderPanelNomor();
+      perbaruiTombolNavigasi();
+      gantiLayar('layarSoal');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderPilihanJawaban(soal) {
+      const wadah = document.getElementById('wadahJawaban');
+      wadah.innerHTML = '';
+      const entry = state.jawaban[String(soal.no)];
+      const nilaiSaatIni = entry ? entry.val : null;
+
+      if (soal.tipe === 'PG') {
+        const list = document.createElement('div');
+        list.className = 'daftar-opsi';
+        soal.opsi.forEach(teksOpsi => {
+          const huruf = teksOpsi.charAt(0);
+          const terpilih = nilaiSaatIni === huruf;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'tombol-opsi' + (terpilih ? ' terpilih' : '');
+          btn.innerHTML = `
+            <span class="penanda-opsi">${terpilih ? '✓' : huruf}</span>
+            <span>${teksOpsi.substring(3)}</span>
+          `;
+          btn.addEventListener('click', () => {
+            AudioNusantara.efekKlik();
+            catatJawaban(soal.no, huruf);
+            renderPilihanJawaban(soal);
+          });
+          list.appendChild(btn);
+        });
+        wadah.appendChild(list);
+      } else if (soal.tipe === 'MCMA') {
+        const list = document.createElement('div');
+        list.className = 'daftar-opsi';
+        const terpilihArr = Array.isArray(nilaiSaatIni) ? nilaiSaatIni : [];
+        soal.opsi.forEach((teksOpsi, idx) => {
+          const terpilih = terpilihArr.includes(idx);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'tombol-opsi' + (terpilih ? ' terpilih' : '');
+          btn.innerHTML = `
+            <span class="penanda-opsi kotak">${terpilih ? '✓' : ''}</span>
+            <span>${teksOpsi}</span>
+          `;
+          btn.addEventListener('click', () => {
+            AudioNusantara.efekKlik();
+            let baru = [...terpilihArr];
+            if (baru.includes(idx)) {
+              baru = baru.filter(i => i !== idx);
+            } else {
+              baru.push(idx);
+            }
+            catatJawaban(soal.no, baru);
+            renderPilihanJawaban(soal);
+          });
+          list.appendChild(btn);
+        });
+        wadah.appendChild(list);
+      } else if (soal.tipe === 'KATEGORI') {
+        const terpilihArr = Array.isArray(nilaiSaatIni) ? nilaiSaatIni : ['', '', ''];
+        soal.pernyataan.forEach((teksPernyataan, idx) => {
+          const kartuKat = document.createElement('div');
+          kartuKat.className = 'kartu-kategori-item';
+          kartuKat.innerHTML = `<div class="teks-pernyataan-kat">${idx + 1}. ${teksPernyataan}</div>`;
+
+          const grupBtn = document.createElement('div');
+          grupBtn.className = 'grup-pilihan-kat';
+
+          soal.labelKategori.forEach(label => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const aktif = terpilihArr[idx] === label;
+            btn.className = 'tombol-kat' + (aktif ? ' terpilih' : '');
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+              AudioNusantara.efekKlik();
+              const baru = [...terpilihArr];
+              baru[idx] = label;
+              catatJawaban(soal.no, baru);
+              renderPilihanJawaban(soal);
+            });
+            grupBtn.appendChild(btn);
+          });
+
+          kartuKat.appendChild(grupBtn);
+          wadah.appendChild(kartuKat);
+        });
+      }
+    }
+
+    function catatJawaban(noSoal, val) {
+      state.jawaban[String(noSoal)] = {
+        val: val,
+        ts: Date.now()
+      };
+      state.adaPerubahanBelumSinkron = true;
+      simpanKeLocalStorage();
+      renderPanelNomor();
+      perbaruiTombolNavigasi();
+    }
+
+    function apakahSoalTerjawab(soal) {
+      if (!soal) return false;
+      const entry = state.jawaban[String(soal.no)];
+      if (!entry || entry.val === null || entry.val === undefined) return false;
+
+      if (soal.tipe === 'PG') {
+        return typeof entry.val === 'string' && entry.val.trim() !== '';
+      }
+      if (soal.tipe === 'MCMA') {
+        return Array.isArray(entry.val) && entry.val.length >= 1;
+      }
+      if (soal.tipe === 'KATEGORI') {
+        return Array.isArray(entry.val) && entry.val.length === 3 &&
+          entry.val.every(v => typeof v === 'string' && v.trim() !== '');
+      }
+      return false;
+    }
+
+    function renderPanelNomor() {
+      const grid = document.getElementById('gridNomorSoal');
+      grid.innerHTML = '';
+      for (let n = 1; n <= 25; n++) {
+        const soal = state.soal[n - 1];
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = n;
+        const pernahDibuka = state.soalPernahDibuka.has(n) || apakahSoalTerjawab(soal);
+        const terjawab = apakahSoalTerjawab(soal);
+        const aktif = state.posisiSoal === n;
+
+        btn.className = 'tombol-nomor' +
+          (aktif ? ' aktif' : (terjawab ? ' terjawab' : '')) +
+          (!pernahDibuka ? ' belum-dibuka' : '');
+
+        btn.addEventListener('click', () => {
+          if (!pernahDibuka) {
+            tampilkanToast('Nomor ini belum terbuka. Kerjakan secara berurutan, ya!');
+            return;
+          }
+          AudioNusantara.efekKlik();
+          bukaSoal(n);
+        });
+        grid.appendChild(btn);
+      }
+    }
+
+    function perbaruiTombolNavigasi() {
+      const btnKembali = document.getElementById('btnKembaliSoal');
+      const btnLanjut = document.getElementById('btnLanjutSoal');
+      const soalAktif = state.soal[state.posisiSoal - 1];
+
+      btnKembali.disabled = state.posisiSoal === 1;
+      btnKembali.style.opacity = state.posisiSoal === 1 ? '0.45' : '1';
+
+      const terjawab = apakahSoalTerjawab(soalAktif);
+      btnLanjut.textContent = state.posisiSoal === 25 ? 'Tinjau Jawaban 📋' : 'Lanjut ➡️';
+      if (terjawab) {
+        btnLanjut.className = 'tombol tombol-utama';
+      } else {
+        btnLanjut.className = 'tombol tombol-nonaktif';
+      }
+    }
+
+    /**
+     * =========================================================================
+     * HALAMAN TINJAU JAWABAN & PENGUMPULAN AKHIR
+     * =========================================================================
+     */
+    function bukaHalamanTinjau() {
+      const wadah = document.getElementById('wadahDaftarTinjau');
+      wadah.innerHTML = '';
+      let jumlahTerjawab = 0;
+
+      NAMA_PULAU.forEach(pulau => {
+        const judulPulau = document.createElement('h3');
+        judulPulau.style.margin = '14px 0 8px';
+        judulPulau.textContent = `Pulau ${pulau.level}: ${pulau.nama}`;
+        wadah.appendChild(judulPulau);
+
+        const awal = (pulau.level - 1) * 5 + 1;
+        const akhir = pulau.level * 5;
+        for (let n = awal; n <= akhir; n++) {
+          const soal = state.soal[n - 1];
+          const terjawab = apakahSoalTerjawab(soal);
+          if (terjawab) jumlahTerjawab++;
+
+          const div = document.createElement('div');
+          div.id = 'tinjau-no-' + n;
+          div.className = 'item-tinjau' + (terjawab ? '' : ' kosong');
+          div.innerHTML = `
+            <div>
+              <strong>Soal ${n}</strong>
+              <div style="font-size:14px;color:${terjawab ? 'var(--hijau-daun)' : 'var(--merah-batik)'};font-weight:700;">
+                ${terjawab ? 'Terjawab: ' + ringkasJawabanMurid(soal) : 'Belum dijawab'}
+              </div>
+            </div>
+            <button type="button" class="tombol tombol-sekunder" style="min-height:44px;font-size:14px;padding:6px 12px;">
+              Ubah
+            </button>
+          `;
+          div.querySelector('button').addEventListener('click', () => {
+            AudioNusantara.efekKlik();
+            bukaSoal(n);
+          });
+          wadah.appendChild(div);
+        }
+      });
+
+      document.getElementById('ringkasanTinjau').textContent =
+        `Kamu telah menjawab ${jumlahTerjawab} dari 25 soal. Pastikan semua soal terjawab sebelum menekan Kumpulkan.`;
+
+      const btnKumpul = document.getElementById('btnBukaKonfirmasiKumpul');
+      btnKumpul.className = jumlahTerjawab === 25 ? 'tombol tombol-emas' : 'tombol tombol-nonaktif';
+
+      gantiLayar('layarTinjau');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function ringkasJawabanMurid(soal) {
+      const entry = state.jawaban[String(soal.no)];
+      if (!entry) return '-';
+      if (soal.tipe === 'PG') return 'Opsi ' + entry.val;
+      if (soal.tipe === 'MCMA') return entry.val.map(i => `Pernyataan ${i + 1}`).join(', ');
+      if (soal.tipe === 'KATEGORI') return entry.val.join(' | ');
+      return '-';
+    }
+
+    async function kumpulkanJawabanFinal(statusKumpul) {
+      if (state.sedangMengirim || state.sudahSelesai) return;
+      state.sedangMengirim = true;
+
+      const modal = document.getElementById('modalKonfirmasi');
+      modal.classList.add('terbuka');
+      document.getElementById('statusKirimModal').style.display = 'block';
+      document.getElementById('btnBatalKumpul').disabled = true;
+      document.getElementById('btnKonfirmasiKumpulFinal').disabled = true;
+      document.getElementById('btnKirimUlangManual').style.display = 'none';
+
+      const infoPerangkat = navigator.userAgent.includes('Mobile') ? 'Ponsel' : 'Laptop/Komputer';
+
+      try {
+        const res = await kirimKeServer({
+          aksi: 'kumpulkan',
+          nama: state.nama,
+          idSesi: state.idSesi,
+          submissionId: state.submissionId,
+          jawaban: state.jawaban,
+          statusKumpul: statusKumpul,
+          jumlahKeluar: state.jumlahKeluar,
+          perangkat: infoPerangkat
+        }, { maksCoba: 6 });
+
+        if (res && res.ok && res.hasil) {
+          state.sudahSelesai = true;
+          if (state.timerInterval) clearInterval(state.timerInterval);
+          if (state.autoSaveTimeout) clearTimeout(state.autoSaveTimeout);
+          AudioNusantara.hentikanBacksound();
+          modal.classList.remove('terbuka');
+          tampilkanLayarHasil(res.hasil, res.pembahasanDibuka, res.pembahasan);
+        } else {
+          throw new Error((res && res.pesan) || 'Gagal menyimpan nilai');
+        }
+      } catch (err) {
+        document.getElementById('statusKirimModal').textContent =
+          'Koneksi terputus saat mengirim. Jawabanmu tetap aman di perangkat. Jangan tutup halaman ini, tekan Kirim Ulang!';
+        document.getElementById('btnKirimUlangManual').style.display = 'inline-flex';
+      } finally {
+        state.sedangMengirim = false;
+      }
+    }
+
+    /**
+     * =========================================================================
+     * LAYAR HASIL & PEMBAHASAN DINAMIS
+     * =========================================================================
+     */
+    function tampilkanLayarHasil(hasil, pembahasanDibuka, daftarPembahasan) {
+      document.getElementById('kotakTimer').style.display = 'none';
+      document.getElementById('indikatorSimpan').style.display = 'none';
+
+      document.getElementById('hasilNama').textContent = hasil.nama;
+      document.getElementById('hasilSkor').textContent = hasil.totalSkor;
+      document.getElementById('hasilStatusKumpul').textContent =
+        `Benar Penuh: ${hasil.jumlahBenar}/25 soal • Status: ${hasil.status}`;
+      document.getElementById('hasilDurasi').textContent =
+        `Lama Pengerjaan: ${hasil.durasiTeks}`;
+
+      for (let i = 0; i < 5; i++) {
+        document.getElementById('skorL' + (i + 1)).textContent = hasil.skorLevel[i] || 0;
+      }
+
+      // Pesan motivasi sesuai rentang skor
+      let motivasi = '';
+      if (hasil.totalSkor >= 85) {
+        motivasi = 'Luar biasa! Kamu penjelajah cerita Nusantara yang sangat teliti dan bijaksana!';
+      } else if (hasil.totalSkor >= 75) {
+        motivasi = 'Hebat! Kamu sudah melampaui batas ketuntasan dengan sangat baik. Terus gemar membaca, ya!';
+      } else {
+        motivasi = 'Tetap semangat berpetualang! Baca kembali cerita rakyat dan pelajari pembahasannya agar makin mahir.';
+      }
+      document.getElementById('hasilMotivasi').textContent = motivasi;
+
+      gantiLayar('layarHasil');
+      luncurkanKonfetiRingan();
+
+      if (pembahasanDibuka && Array.isArray(daftarPembahasan)) {
+        renderDaftarPembahasan(daftarPembahasan);
+      }
+    }
+
+    async function cekPembahasanServer() {
+      const btn = document.getElementById('btnCekPembahasan');
+      btn.disabled = true;
+      btn.textContent = 'Memeriksa... ⏳';
+      try {
+        const res = await kirimKeServer({
+          aksi: 'cekPembahasan',
+          nama: state.nama
+        }, { maksCoba: 3 });
+
+        if (res && res.ok && res.pembahasanDibuka && Array.isArray(res.pembahasan)) {
+          renderDaftarPembahasan(res.pembahasan);
+          tampilkanToast('Pembahasan sudah dibuka oleh Bu Venny!');
+        } else {
+          tampilkanToast('Pembahasan belum dibuka oleh Bu Venny. Coba beberapa saat lagi, ya!');
+        }
+      } catch (e) {
+        tampilkanToast('Gagal mengecek pembahasan. Periksa koneksi internetmu.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Cek Pembahasan';
+      }
+    }
+
+    function renderDaftarPembahasan(daftar) {
+      document.getElementById('wadahTerkunciPembahasan').style.display = 'none';
+      const wadah = document.getElementById('wadahDaftarPembahasan');
+      wadah.style.display = 'block';
+      wadah.innerHTML = '';
+
+      daftar.forEach(item => {
+        const kelas = item.skor === 4 ? 'benar' : (item.skor === 2 ? 'sebagian' : 'salah');
+        const ikon = item.skor === 4 ? '✅ Benar (+4)' : (item.skor === 2 ? '⚠️ Benar Sebagian (+2)' : '❌ Salah (0)');
+        const div = document.createElement('div');
+        div.className = 'kartu-pembahasan ' + kelas;
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:6px;">
+            <span>Soal Nomor ${item.no}</span>
+            <span>${ikon}</span>
+          </div>
+          <div style="font-size:15px;margin-bottom:6px;white-space:pre-line;"><strong>Pertanyaan:</strong> ${item.pertanyaan}</div>
+          <div style="font-size:14.5px;margin-bottom:4px;"><strong>Jawabanmu:</strong> ${item.jawabanTeks}</div>
+          <div style="font-size:14.5px;margin-bottom:8px;color:var(--hijau-daun);"><strong>Kunci Jawaban:</strong> ${item.kunciTeks}</div>
+          <div style="font-size:15px;background:#f8fafc;padding:10px;border-radius:10px;border:1px solid #e2e8f0;">
+            <strong>Pembahasan:</strong> ${item.pembahasan}
+          </div>
+        `;
+        wadah.appendChild(div);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * UTILITAS UI (GANTI LAYAR, TOAST, KONFETI RINGAN)
+     * =========================================================================
+     */
+    function gantiLayar(idLayar) {
+      document.querySelectorAll('.layar').forEach(el => el.classList.remove('aktif'));
+      const target = document.getElementById(idLayar);
+      if (target) target.classList.add('aktif');
+      state.layarAktif = idLayar;
+    }
+
+    let toastTimer = null;
+    function tampilkanToast(pesan) {
+      const el = document.getElementById('toastPesan');
+      el.textContent = pesan;
+      el.classList.add('tampil');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        el.classList.remove('tampil');
+      }, 3000);
+    }
+
+    function luncurkanKonfetiRingan() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const wadah = document.getElementById('konfetiWadah');
+      wadah.innerHTML = '';
+      const warna = ['#d97706', '#0f4c81', '#15803d', '#eab308', '#dc2626'];
+      for (let i = 0; i < 28; i++) {
+        const k = document.createElement('div');
+        k.style.position = 'absolute';
+        k.style.left = Math.random() * 100 + 'vw';
+        k.style.top = '-15px';
+        k.style.width = '10px';
+        k.style.height = '10px';
+        k.style.borderRadius = '2px';
+        k.style.backgroundColor = warna[i % warna.length];
+        k.style.transition = 'transform 1.8s ease-out, opacity 1.8s ease-out';
+        wadah.appendChild(k);
+        requestAnimationFrame(() => {
+          k.style.transform = `translateY(${85 + Math.random() * 20}vh) rotate(${Math.random() * 360}deg)`;
+          k.style.opacity = '0';
+        });
+      }
+      setTimeout(() => { wadah.innerHTML = ''; }, 2000);
+    }
+  </script>
+</body>
+</html>
